@@ -574,6 +574,12 @@ Maybe<void> AESCipherTraits::AdditionalConfig(
       THROW_ERR_CRYPTO_INVALID_IV(env);
       return Nothing<void>();
     }
+  } else if (params->cipher.isGcmMode()) {
+    // GCM allows non-empty variable-length IVs.
+    if (params->iv.size() == 0) {
+      THROW_ERR_CRYPTO_INVALID_IV(env);
+      return Nothing<void>();
+    }
   } else {
     // For other modes, check against the cipher's expected IV length
     if (params->iv.size() < static_cast<size_t>(params->cipher.getIvLength())) {
